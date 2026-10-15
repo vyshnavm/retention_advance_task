@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="ra_report_wizard_form" model="ir.ui.view">
+        <field name="name">ra.report.wizard.form</field>
+        <field name="model">ra.report.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Retention &amp; Advance Report">
+                <header>
+                    <button name="action_generate" string="Generate" type="object" class="btn-primary"/>
+                    <button name="action_export_xlsx" string="Export to Excel" type="object"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="date_to"/>
+                            <field name="partner_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                        </group>
+                        <group>
+                            <field name="company_ids" widget="many2many_tags"
+                                   groups="base.group_multi_company" options="{'no_create': True}"/>
+                        </group>
+                    </group>
+                    <field name="line_ids" readonly="1">
+                        <list>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="currency_id" column_invisible="1"/>
+                            <field name="partner_id"/>
+                            <field name="project_id"/>
+                            <field name="total_untaxed" optional="hide" sum="Total"/>
+                            <field name="total_invoiced" sum="Total"/>
+                            <field name="retention_held" sum="Total"/>
+                            <field name="retention_released" sum="Total"/>
+                            <field name="retention_balance" sum="Total"/>
+                            <field name="advance_received" sum="Total"/>
+                            <field name="advance_recovered" sum="Total"/>
+                            <field name="advance_balance" sum="Total"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ra_report_wizard" model="ir.actions.act_window">
+        <field name="name">Retention &amp; Advance Report</field>
+        <field name="res_model">ra.report.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+    </record>
+</odoo>

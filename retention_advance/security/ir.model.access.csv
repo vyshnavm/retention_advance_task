@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ra_release_wizard,ra.release.wizard,model_ra_release_wizard,account.group_account_user,1,1,1,1
+access_ra_release_wizard_line,ra.release.wizard.line,model_ra_release_wizard_line,account.group_account_user,1,1,1,1
+access_ra_report_wizard,ra.report.wizard,model_ra_report_wizard,account.group_account_readonly,1,1,1,1
+access_ra_report_line,ra.report.line,model_ra_report_line,account.group_account_readonly,1,1,1,1
+access_ra_report_wizard_invoice,ra.report.wizard.invoice,model_ra_report_wizard,account.group_account_invoice,1,1,1,1
+access_ra_report_line_invoice,ra.report.line.invoice,model_ra_report_line,account.group_account_invoice,1,1,1,1

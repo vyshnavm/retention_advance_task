@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_invoice_document_ra" inherit_id="account.report_invoice_document">
+        <xpath expr="//div[@id='total']//table[hasclass('o_total_table')]" position="inside">
+            <t t-if="o.move_type in ('out_invoice', 'out_refund') and (o.ra_retention_amount or o.ra_recovery_amount)">
+                <tr t-if="o.ra_retention_amount" name="ra_retention">
+                    <td>
+                        <t t-if="o.move_type == 'out_invoice'">Less: Retention<t t-if="o.ra_retention_percent"> (<span t-out="'%g' % o.ra_retention_percent"/>%)</t></t>
+                        <t t-else="">Retention returned</t>
+                    </td>
+                    <td class="text-end">
+                        <span t-field="o.ra_retention_amount"/>
+                    </td>
+                </tr>
+                <tr t-if="o.ra_recovery_amount" name="ra_recovery">
+                    <td>
+                        <t t-if="o.move_type == 'out_invoice'">Less: Advance recovery</t>
+                        <t t-else="">Advance restored</t>
+                    </td>
+                    <td class="text-end">
+                        <span t-field="o.ra_recovery_amount"/>
+                    </td>
+                </tr>
+                <tr class="fw-bold border-top" name="ra_amount_to_pay">
+                    <td>Amount to Pay Now</td>
+                    <td class="text-end">
+                        <span t-field="o.ra_amount_to_pay"/>
+                    </td>
+                </tr>
+                <tr t-if="o.ra_retention_amount and o.ra_retention_due_date and o.move_type == 'out_invoice'" name="ra_due">
+                    <td class="text-muted"><small>Retention due on handover (expected)</small></td>
+                    <td class="text-end text-muted"><small><span t-field="o.ra_retention_due_date"/></small></td>
+                </tr>
+            </t>
+        </xpath>
+    </template>
+</odoo>

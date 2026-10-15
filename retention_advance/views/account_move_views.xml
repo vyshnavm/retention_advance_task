@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_move_form_ra" model="ir.ui.view">
+        <field name="name">account.move.form.retention.advance</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <!-- deductions summary right under the tax totals -->
+            <xpath expr="//group[hasclass('oe_subtotal_footer')]//field[@name='amount_residual']" position="before">
+                <field name="ra_retention_amount" string="Less: Retention"
+                       invisible="not ra_retention_amount"/>
+                <field name="ra_recovery_amount" string="Less: Advance Recovery"
+                       invisible="not ra_recovery_amount"/>
+                <field name="ra_amount_to_pay" class="fw-bold"
+                       invisible="not ra_retention_amount and not ra_recovery_amount"/>
+            </xpath>
+            <xpath expr="//page[@id='invoice_tab']" position="after">
+                <page string="Retention &amp; Advance" name="ra_tab"
+                      invisible="move_type not in ('out_invoice', 'out_refund')">
+                    <field name="commercial_partner_id" invisible="1"/>
+                    <group invisible="move_type != 'out_invoice'">
+                        <group string="Retention">
+                            <field name="ra_retention_percent" readonly="state != 'draft'"/>
+                            <field name="ra_retention_amount"/>
+                            <field name="ra_retention_due_date" readonly="state != 'draft'"
+                                   required="ra_retention_amount and state == 'draft'"/>
+                            <field name="ra_project_id" readonly="state != 'draft'"/>
+                        </group>
+                        <group string="Advance Recovery">
+                            <field name="ra_advance_payment_id" readonly="state != 'draft'"
+                                   required="ra_recovery_amount and state == 'draft'"
+                                   options="{'no_create': True}"
+                                   domain="[('payment_type', '=', 'inbound'), ('partner_type', '=', 'customer'),
+                                            ('company_id', '=', company_id),
+                                            ('partner_id', 'child_of', commercial_partner_id),
+                                            ('move_id.state', '=', 'posted'),
+                                            ('move_id.line_ids', 'any', [('account_id.account_type', '=', 'asset_receivable'),
+                                                                         ('reconciled', '=', False),
+                                                                         ('amount_residual', '&lt;', 0)])]"/>
+                            <field name="ra_advance_available" invisible="not ra_advance_payment_id"/>
+                            <field name="ra_recovery_type" widget="radio" readonly="state != 'draft'"/>
+                            <field name="ra_recovery_percent" readonly="state != 'draft'"
+                                   invisible="ra_recovery_type != 'percent'"/>
+                            <field name="ra_recovery_fixed" readonly="state != 'draft'"
+                                   invisible="ra_recovery_type != 'fixed'"/>
+                            <field name="ra_recovery_amount"/>
+                        </group>
+                    </group>
+                    <group invisible="move_type != 'out_refund'">
+                        <group string="Credit note">
+                            <field name="ra_project_id" readonly="state != 'draft'"/>
+                            <field name="ra_retention_amount" string="Retention returned"/>
+                            <field name="ra_recovery_amount" string="Advance restored"/>
+                        </group>
+                    </group>
+                    <group class="oe_subtotal_footer" col="1">
+                        <field name="amount_total"/>
+                        <field name="ra_amount_to_pay" class="fw-bold"/>
+                    </group>
+                    <field name="ra_companion_ids" invisible="not ra_companion_ids" readonly="1">
+                        <list>
+                            <field name="date"/>
+                            <field name="name"/>
+                            <field name="ra_kind"/>
+                            <field name="ra_signed_amount" sum="Total"/>
+                            <field name="ra_reversed"/>
+                            <field name="company_currency_id" column_invisible="1"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>
